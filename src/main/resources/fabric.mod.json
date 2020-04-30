@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "boringminigames",
+  "version": "${version}",
+  "name": "Boring Minigames",
+  "description": "This is a BoredTemplate-based mod, if you are seeing this, this is either a showcase or extremely laziness, probably the second one.",
+  "authors": [
+    "joaoh1"
+  ],
+  "contact": {
+    "homepage": "https://curseforge.com/",
+    "sources": "https://github.com/"
+  },
+  "license": "MIT",
+  "icon": "assets/boringminigames/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.joaoh1.boringminigames.BoringMinigamesMod"
+    ]
+  },
+  "mixins": [
+    "boringminigames.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.7.8",
+    "minecraft": ">=1.15.0"
+  }
+}

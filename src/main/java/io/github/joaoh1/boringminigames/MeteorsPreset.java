@@ -108,7 +108,6 @@ public class MeteorsPreset extends Preset {
 	private final BlockLandEvent.Listener blockLandListener = ((world, entity, data, distance) -> {
 		if (entity.collided) {
 			if (entity.getClass().equals(FallingBlockEntity.class)) {
-				meteorsSpawned--;
 				entity.teleport(100, 255, 100);
 				world.setBlockState(data.getPosition().asBlockPosition().up(), Blocks.AIR.getDefaultState());
 				world.getPlayers().forEach(player -> {
@@ -149,7 +148,9 @@ public class MeteorsPreset extends Preset {
 				world.getPlayers().forEach(player -> {
 					player.addScoreboardTag("targeted");
 				});
+				int timesExecuted = 0;
 				for (int i = 0; i < 4; i++) {
+					timesExecuted++;
 					BlockPos randomBlockPos = new BlockPos(world.random.nextInt(30), 60, world.random.nextInt(30));
 					if (world.getBlockState(randomBlockPos).getBlock().equals(Blocks.STONE)) {
 						world.spawnEntity(createFallingMeteor(world, randomBlockPos));
@@ -157,6 +158,18 @@ public class MeteorsPreset extends Preset {
 						world.spawnEntity(createFallingMeteor(world, randomBlockPos));
 					} else if (world.getBlockState(randomBlockPos).getBlock().equals(Blocks.COBBLESTONE)) {
 						world.spawnEntity(createFallingMeteor(world, randomBlockPos));
+					} else if (world.getBlockState(randomBlockPos).getBlock().equals(Blocks.POLISHED_ANDESITE)) {
+						if (world.getBlockState(randomBlockPos.up()).getBlock().equals(Blocks.BARRIER)) {
+							if (timesExecuted < 100) {
+								i--;
+							}
+						} else if (world.getBlockState(randomBlockPos.up()).getBlock().equals(Blocks.AIR)) {
+							world.spawnEntity(createFallingMeteor(world, randomBlockPos));
+						}
+					} else {
+						if (timesExecuted < 100) {
+							i--;
+						}
 					}
 				}
 			}
@@ -168,6 +181,15 @@ public class MeteorsPreset extends Preset {
 		if (entity.getClass().equals(BatEntity.class)) {
 			entity.remove();
 			return EventResult.CANCEL;
+		}
+		return EventResult.CONTINUE;
+	});
+
+	private final EntityRemoveEvent.Listener entityRemoveListener = ((entity) -> {
+		if (entity.getClass().equals(FallingBlockEntity.class)) {
+			if (((FallingBlockEntity) entity).getBlockState().equals(Blocks.MAGMA_BLOCK.getDefaultState())) {
+				meteorsSpawned--;
+			}
 		}
 		return EventResult.CONTINUE;
 	});
@@ -272,7 +294,7 @@ public class MeteorsPreset extends Preset {
 
 		EntityAddEvent.register(entityAddListener);
 
-		//EntityRemoveEvent.register(entityRemoveListener);
+		EntityRemoveEvent.register(entityRemoveListener);
 	}
 
 	@Override
@@ -297,7 +319,7 @@ public class MeteorsPreset extends Preset {
 
 		EntityAddEvent.unregister(entityAddListener);
 
-		//EntityRemoveEvent.unregister(entityRemoveListener);
+		EntityRemoveEvent.unregister(entityRemoveListener);
 	}
 
 	@Override

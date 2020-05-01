@@ -1,6 +1,5 @@
 package io.github.joaoh1.boringminigames;
 
-
 import com.github.vini2003.polyester.api.event.type.block.BlockStepEvent;
 import com.github.vini2003.polyester.api.tracker.Tracker;
 import com.github.vini2003.polyester.api.dimension.registry.DimensionRegistry;
@@ -21,6 +20,10 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.passive.BatEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.structure.StructurePlacementData;
@@ -55,13 +58,21 @@ public class MeteorsPreset extends Preset {
     private int meteorsSpawned = 0;
 
     private final FallingBlockEntity createFallingMeteor(World world, BlockPos blockPos) {
-		if (meteorsSpawned <= 40) {
-			meteorsSpawned++;
-			FallingBlockEntity fallingMeteor = new FallingBlockEntity(world, blockPos.getX() + 0.5, 128, blockPos.getZ() + 0.5, Blocks.MAGMA_BLOCK.getDefaultState());
-			fallingMeteor.dropItem = false;
-			fallingMeteor.timeFalling = 1;
-			fallingMeteor.addVelocity(0, -1.0, 0);
-			return fallingMeteor;
+		if (meteorsSpawned <= 30) {
+			if (world.random.nextInt(100) == 1 && meteorsSpawned > 15) {
+				FallingBlockEntity fallingLootbox = new FallingBlockEntity(world, blockPos.getX() + 0.5, 128, blockPos.getZ() + 0.5, Blocks.GOLD_BLOCK.getDefaultState());
+				fallingLootbox.dropItem = false;
+				fallingLootbox.timeFalling = 1;
+				fallingLootbox.addVelocity(0, -1.0, 0);
+				return fallingLootbox;
+			} else  {
+				meteorsSpawned++;
+				FallingBlockEntity fallingMeteor = new FallingBlockEntity(world, blockPos.getX() + 0.5, 128, blockPos.getZ() + 0.5, Blocks.MAGMA_BLOCK.getDefaultState());
+				fallingMeteor.dropItem = false;
+				fallingMeteor.timeFalling = 1;
+				fallingMeteor.addVelocity(0, -1.0, 0);
+				return fallingMeteor;
+			}
 		} else {
 			return new FallingBlockEntity(world, 15, -15, 15, Blocks.STONE.getDefaultState());
 		}
@@ -109,6 +120,20 @@ public class MeteorsPreset extends Preset {
 			if (entity.getClass().equals(FallingBlockEntity.class)) {
 				entity.teleport(100, 255, 100);
 				world.setBlockState(data.getPosition().asBlockPosition().up(), Blocks.AIR.getDefaultState());
+				if (((FallingBlockEntity) entity).getBlockState().equals(Blocks.GOLD_BLOCK.getDefaultState())) {
+					world.getPlayers().forEach(player -> {
+						if (player.getBlockPos().isWithinDistance(data.getPosition(), 2)) {
+							ListTag listTag = new ListTag();
+							listTag.add(0, StringTag.of("minecraft:stone"));
+							listTag.add(1, StringTag.of("minecraft:andesite"));
+							listTag.add(2, StringTag.of("minecraft:cobblestone"));
+							ItemStack itemStack = new ItemStack(Items.STONE, 64);
+							itemStack.getOrCreateTag().put("CanPlaceOn", listTag);
+							player.giveItemStack(itemStack);
+						}
+					});
+					return EventResult.CONTINUE;
+				}
 				world.getPlayers().forEach(player -> {
 					if (player.getBlockPos().isWithinDistance(data.getPosition(), 2)) {
 						player.damage(DamageSource.OUT_OF_WORLD, 1.0F);

@@ -55,7 +55,7 @@ public class MeteorsPreset extends Preset {
     private int meteorsSpawned = 0;
 
     private final FallingBlockEntity createFallingMeteor(World world, BlockPos blockPos) {
-		if (meteorsSpawned <= 40) {
+		if (meteorsSpawned <= 30) {
 			meteorsSpawned++;
 			FallingBlockEntity fallingMeteor = new FallingBlockEntity(world, blockPos.getX() + 0.5, 128, blockPos.getZ() + 0.5, Blocks.MAGMA_BLOCK.getDefaultState());
 			fallingMeteor.dropItem = false;

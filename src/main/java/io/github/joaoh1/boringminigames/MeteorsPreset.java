@@ -55,15 +55,14 @@ public class MeteorsPreset extends Preset {
     private int meteorsSpawned = 0;
 
     private final FallingBlockEntity createFallingMeteor(World world, BlockPos blockPos) {
-    	meteorsSpawned++;
-		if (meteorsSpawned < 40) {
+		if (meteorsSpawned <= 40) {
+			meteorsSpawned++;
 			FallingBlockEntity fallingMeteor = new FallingBlockEntity(world, blockPos.getX() + 0.5, 128, blockPos.getZ() + 0.5, Blocks.MAGMA_BLOCK.getDefaultState());
 			fallingMeteor.dropItem = false;
 			fallingMeteor.timeFalling = 1;
 			fallingMeteor.addVelocity(0, -1.0, 0);
 			return fallingMeteor;
 		} else {
-			meteorsSpawned--;
 			return new FallingBlockEntity(world, 15, -15, 15, Blocks.STONE.getDefaultState());
 		}
 	}

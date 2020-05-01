@@ -8,7 +8,7 @@ My personal playground for Polyester. Made exclusively for fun, don't expect thi
 
 This mod is available for download on the following services:
 
-- [GitHub Packages (indev releases, **use at your own risk**)](https://github.com/)
+- [GitHub Packages (indev releases, **use at your own risk**)](https://github.com/joaoh1/BoringMinigames/packages)
 
 ## License
 
